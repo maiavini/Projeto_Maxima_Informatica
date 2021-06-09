@@ -1,0 +1,20 @@
+﻿create table Artigos_Log
+(
+   Valor_Antigo numeric(18,3),
+   Valor_Novo numeric(18,3),
+   Data_Alteracao DateTime default getdate(), 
+   Utilizador varchar(50) default SUSER_NAME()
+)
+
+
+create trigger TRG_ARTIGO
+on Artigos
+after update
+as
+  declare @id varchar;
+  select @id = ins.STAMP from inserted ins;
+if (update(preco_venda))
+begin	  
+  insert into Artigos_Log (Valor_Antigo, Valor_Novo) 
+	select d.preco_venda, ins.preco_venda from inserted ins, deleted d
+end;
